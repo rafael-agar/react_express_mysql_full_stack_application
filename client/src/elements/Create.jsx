@@ -1,13 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import {Link, useNavigate} from 'react-router-dom'
 
 function Create() {
+    const [cargo, setCargo] = useState([]);
     const [values, setValues] = useState({
         name: '',
-        email: '',
-        age: '',
-        gender: ''
+        usuario: '',
+        password: '',
+        fecha_contratacion: '',
+        id_cargo: ''
     })
 
     const navigate = useNavigate()
@@ -15,7 +17,7 @@ function Create() {
     function handleSubmit(e){
         e.preventDefault()
 
-        axios.post('/add_user', values)
+        axios.post('http://localhost:5500/add_trabajador', values)
         .then((res)=>{
             
             navigate('/')
@@ -23,33 +25,65 @@ function Create() {
         })
         .catch((err)=>console.log(err))
     }
+
+    useEffect(()=>{
+        axios
+          .get(`http://localhost:5500/cargo`)
+          .then((res) => {
+            setCargo(res.data);
+          })
+          .catch((err) => console.log(err));
+      },[])
+
   return (
-    <div className='container vh-100 vw-100 bg-primary'>
-        <div className='row'>
-            <h3>Add Student</h3>
+    <div className='container-fluid w-50 vh-100'>
+        <div className='row bg-light p-4'>
+            <h3 className='text-center'>Add Trabajador</h3>
             <div className='d-flex justify-content-end'>
-                <Link to='/' class='btn btn-success'>Home</Link>
+            <button onClick={() => navigate(-1)} className="btn btn-success">
+              Volver
+            </button>
             </div>
             <form onSubmit={handleSubmit}>
                 <div className='form-group my-3'>
                     <label htmlFor='name'>Name</label>
-                    <input type='text' name='name' required onChange={(e)=> setValues({...values, name: e.target.value})} />
+                    <input className="form-control" type='text' name='name' required onChange={(e)=> setValues({...values, name: e.target.value})} />
                 </div>
                 <div className='form-group my-3'>
-                    <label htmlFor='email'>Email</label>
-                    <input type='email' name='email' required onChange={(e)=> setValues({...values, email: e.target.value})} />
+                    <label htmlFor='usuario'>Usuario</label>
+                    <input className="form-control" type='text' name='usuario' required onChange={(e)=> setValues({...values, usuario: e.target.value})} />
                 </div>
                 <div className='form-group my-3'>
-                    <label htmlFor='gender'>Gender</label>
-                    <input type='text' name='gender' required onChange={(e)=> setValues({...values, gender: e.target.value})} />
+                    <label htmlFor='Password'>Password</label>
+                    <input className="form-control" type='password' name='Password' required onChange={(e)=> setValues({...values, password: e.target.value})} />
                 </div>
                 <div className='form-group my-3'>
-                    <label htmlFor='age'>Age</label>
-                    <input type='number' name='age' required onChange={(e)=> setValues({...values, age: e.target.value})} />
+                    <label htmlFor='fecha_contratacion'>Fecha Contratacion</label>
+                    <input className="form-control" type='date' name='fecha_contratacion' required onChange={(e)=> setValues({...values, fecha_contratacion: e.target.value})} />
                 </div>
                 <div className='form-group my-3'>
-                    <button type='submit' className='btn btn-success'>Save</button>
+                    <label htmlFor='id_cargo'>Cargo id</label>
+                    <input className="form-control" type='text' name='id_cargo' required onChange={(e)=> setValues({...values, id_cargo: e.target.value})} />
                 </div>
+                <div className='form-group my-3'>
+                    <button type='submit' className='btn btn-primary mt-2 w-100'>Save</button>
+                </div>
+                <table>
+            <thead>
+              <tr>
+                <th>Nombre del cargo</th>
+                <th>ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cargo.map((e, index) => (
+                <tr key={index}>
+                  <td>{e.Nombre_cargo}</td>
+                  <td>{e.ID_cargo}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
             </form>
         </div>
     </div>
