@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 import axios from 'axios';
 import myLogo from '../Logo.png'
+const apiURL = process.env.REACT_APP_API_URL;
 
 function Asistencia() {
     const [usuario, setUsuario] = useState('');
@@ -9,20 +10,21 @@ function Asistencia() {
     //const [error, setError] = useState('');
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate()
+    const [respuesta, setRespuesta] = useState([]);
 
     const handleSubmit = async (e) => {
       e.preventDefault();
       try {
-          const response = await axios.post('http://localhost:5500/login', { usuario, password })
+          const response = await axios.post(`${apiURL}/login`, { usuario, password })
           console.log('Loginx successfullllll:', response.data);
-
+          setRespuesta(response.data)
           setShowModal(true); // Mostrar el modal
             setTimeout(() => {
                 setShowModal(false); // Cerrar el modal después de 3 segundos
                 setUsuario('')
                 setPassword('')
                 navigate('/');
-            }, 5000);
+            }, 8000);
       } catch (error) {
           //setError('Invalid username or password');
           console.error('Login error:', error);
@@ -67,11 +69,13 @@ function Asistencia() {
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Resltado</h5>
+                        <h5 className="modal-title">Datos del trabajador</h5>
                         <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
                     </div>
                     <div className="modal-body">
-                        <p>Hola {usuario}</p>
+                      <p>Hola {usuario}</p>  
+                      {respuesta.message}
+                      <span className='text-primary"'> {respuesta.currentHour}</span>
                     </div>
                 </div>
             </div>

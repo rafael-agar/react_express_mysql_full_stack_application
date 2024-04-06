@@ -2,17 +2,20 @@ import {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import Menu from "../components/Menu"
+import Modal from "../components/Modal"
+const apiURL = process.env.REACT_APP_API_URL;
 
 const Reporte = () => {
 
     const [data, setData] = useState([])
     const [deleted, setDeleted] = useState(true)
+    const [showModal, setShowModal] = useState(false);
 
     //trabajadores
     useEffect(()=>{
         if(deleted){
             setDeleted(false)
-            axios.get('http://localhost:5500/reporte')
+            axios.get(`${apiURL}/reporte`)
             .then((res)=>{
                 setData(res.data)
         })
@@ -25,7 +28,7 @@ const Reporte = () => {
         const isConfirmed = window.confirm("¿Estás seguro de que deseas eliminar este registro del reporte?")
 
         if(isConfirmed){
-            axios.delete(`http://localhost:5500/delete_reporte/${id}`)
+            axios.delete(`${apiURL}/delete_reporte/${id}`)
             .then((res)=>{
                 setDeleted(true)
             })
@@ -33,12 +36,30 @@ const Reporte = () => {
         }
     }
 
+    //paginación
+    const [currentPage, setCurrentPage] = useState(1);
+    const recordsPage = 10;
+    const lastIndex = currentPage * recordsPage;
+    const firstIndex = lastIndex - recordsPage;
+    const records = data.slice(firstIndex, lastIndex);
+    const nPage = Math.ceil(data.length / recordsPage);
+    const numbers = [ ...Array(nPage+1).keys()].slice(1);
+
   return (
     <div className='container-fluid bg-light vh-100'>
         <h3 className='text-center p-4'>Reporte de Asistencia A&B Bookcafe</h3>
         <div className='d-flex flex-column container-lg'>
             
                 <Menu />
+                <button 
+                    type="button" 
+                    className="btn btn-success" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#staticBackdrop"
+                    onClick={() => setShowModal(true)}
+                >
+                Exportar como csv
+                </button>
             
             {/* //trabajadores lista */}
             <table className='table table-hover'>
@@ -55,7 +76,7 @@ const Reporte = () => {
                 </thead>
                 <tbody>
                     {
-                        data.map((reporte)=>{
+                        records.map((reporte)=>{
                             console.log(reporte)
                             return (<tr>
                                 {/* <td>{trabajador.id}</td> */}
@@ -75,9 +96,50 @@ const Reporte = () => {
                     }
                 </tbody>
             </table>
+            {/* paginación */}
+            <nav>
+                <ul className="pagination">
+                    <li className="page-item">
+                        <a className="page-link" href="#" onClick={prePage}>Anterior</a>
+                    </li>
+                    {
+                        numbers.map((n, i) => (
+                            <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={i}>
+                                <a className="page-link" href="#" onClick={()=> changeCPage(n)}>{n}</a>
+                            </li>
+                        ))
+                    }
+                    <li className="page-item">
+                        <a className="page-link" href="#" onClick={nextPage}>Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
+
+            {/* <!-- Scrollable modal --> */}
+            {showModal &&  (
+                <Modal data={data} modal={setShowModal} />              
+            )}
+            <div className={showModal ? "modal-backdrop fade show" : ""}></div>
         </div>
     </div>
   )
+
+  function prePage() {
+    if(currentPage !== 1){
+        setCurrentPage(currentPage - 1);
+    }
+  }
+
+  function changeCPage(id) {
+    setCurrentPage(id)
+  }
+
+  function nextPage() {
+    if(currentPage !== nPage){
+        setCurrentPage(currentPage + 1);
+    }
+  }
+
 }
 
 export default Reporte

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import {Link, useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
+const apiURL = process.env.REACT_APP_API_URL;
 
 function Create() {
     const [cargo, setCargo] = useState([]);
@@ -17,10 +18,10 @@ function Create() {
     function handleSubmit(e){
         e.preventDefault()
 
-        axios.post('http://localhost:5500/add_trabajador', values)
+        axios.post(`${apiURL}/add_trabajador`, values)
         .then((res)=>{
             
-            navigate('/')
+            navigate('/admin')
             console.log(res)
         })
         .catch((err)=>console.log(err))
@@ -28,7 +29,7 @@ function Create() {
 
     useEffect(()=>{
         axios
-          .get(`http://localhost:5500/cargo`)
+          .get(`${apiURL}/cargo`)
           .then((res) => {
             setCargo(res.data);
           })

@@ -2,6 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+const apiURL = process.env.REACT_APP_API_URL;
 
 const Edit_reporte = () => {
 
@@ -11,7 +12,7 @@ const Edit_reporte = () => {
   //obtener un reporte
   useEffect(() => {
     axios
-      .get(`http://localhost:5500/get_reporte/${id}`)
+      .get(`${apiURL}/get_reporte/${id}`)
       .then((res) => {
         setData(res.data);
       })
@@ -24,7 +25,7 @@ const Edit_reporte = () => {
     e.preventDefault();
 
     axios
-      .post(`http://localhost:5500/edit_reporte/${id}`, data[0])
+      .post(`${apiURL}/edit_reporte/${id}`, data[0])
       .then((res) => {
         navigate("/admin");
         console.log(res);

@@ -5,6 +5,7 @@ const path = require("path");
 const app = express();
 //time
 const moment = require('moment-timezone');
+require('dotenv').config();
 
 //path.resolve()
 app.use(express.static(path.join(__dirname, "public")));
@@ -13,10 +14,10 @@ app.use(express.json());
 
 const port = 5500;
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "password",
-  database: "control_asistencia",
+  host: process.env.HOST,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE,
 });
 
 /* ################## tabla trabajador_details ######################### */
@@ -31,18 +32,6 @@ app.post("/add_trabajador", (req, res) => {
     return res.json({ success: "trabajador added successfully" });
   });
 });
-
-// list control de asistencia
-// app.get("/trabajador_details", (req, res) => {
-//   const sql = "SELECT * FROM trabajador_details";
-//   db.query(sql, (err, result) => {
-//     if (err) {
-//       console.error("Database error:", err);
-//       return res.status(500).json({ message: "Server error" }); // Send error response and return to prevent further execution
-//     }
-//     return res.json(result); // Send successful response
-//   });
-// });
 
 // list control de asistencia
 app.get("/trabajador_details", (req, res) => {
@@ -258,7 +247,7 @@ app.post('/login', (req, res) => {
               console.error('Error inserting into asistencia_daily:', err);
               return res.status(500).json({ error: 'An error occurred while inserting into asistencia_daily'});
             }
-            res.json({ message: 'Registro de asistencia creado correctamente', currentHour });
+            res.json({ message: 'Registro de ENTREDA creado correctamente', currentHour });
           });
         }
       });
@@ -280,9 +269,9 @@ function updateAttendanceRecord(row, userId, currentDate, res) {
     let hoursEnd = new Date(`${currentDate}T${hoursEndStr}`);
 
     // Ajustar 'hoursEnd' al día siguiente si es menor que 'hoursStart'
-    // if (hoursEnd < hoursStart) {
-    //   hoursEnd.setDate(hoursEnd.getDate() + 1);
-    // }
+    if (hoursEnd < hoursStart) {
+      hoursEnd.setDate(hoursEnd.getDate() + 1);
+    }
 
     // Calcular la diferencia en horas
     const timeWorked = calcularTiempoTrabajado(hoursStart, hoursEnd);
@@ -299,7 +288,7 @@ function updateAttendanceRecord(row, userId, currentDate, res) {
           console.error('Error updating asistencia_daily:', err);
           return res.status(500).json({ error: 'An error occurred while updating asistencia_daily' });
         }
-        res.json({ message: 'Valores de asistencia actualizados correctamente', timeWorked });
+        res.json({ message: 'SALIDA creada correctamente, Adios!', timeWorked });
       });
     } else {
       console.error('timeWorked calculated as negative');
@@ -363,7 +352,8 @@ app.get("/reporte", (req, res) => {
   const sql = `
   SELECT ad.*, td.name
 FROM asistencia_daily ad
-LEFT JOIN trabajador_details td ON ad.usuario = td.id;
+LEFT JOIN trabajador_details td ON ad.usuario = td.id
+ORDER BY ad.date DESC;
   `;
     // const sql = "SELECT * FROM asistencia_daily";
     
@@ -418,6 +408,29 @@ app.post("/edit_reporte/:id", (req, res) => {
     return res.json({ success: "cargo updated successfully" });
   });
 });
+
+// Exportar reporte
+app.get("/exportar_reporte", (req, res) => {
+  // Obteniendo fechas desde los parámetros de la query, no desde los parámetros de la ruta
+  const fechaInicio = req.query.fechaInicio;
+  const fechaFin = req.query.fechaFin;
+
+  // Asegúrate de que ambas fechas están presentes
+  if (!fechaInicio || !fechaFin) {
+    return res.status(400).json({ message: "Se requieren la fecha de inicio y la fecha de fin" });
+  }
+
+  const sql = "SELECT * FROM asistencia_daily WHERE `date` BETWEEN ? AND ?";
+
+  db.query(sql, [fechaInicio, fechaFin], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Error del servidor al obtener el reporte" });
+    }
+    return res.json(result);
+  });
+});
+
 
 
 /* ########################################################## */

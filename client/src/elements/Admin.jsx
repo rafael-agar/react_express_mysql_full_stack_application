@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Menu from "../components/Menu"
-
+const apiURL = process.env.REACT_APP_API_URL;
 
 function Home() {
     const [data, setData] = useState([])
@@ -13,7 +13,7 @@ function Home() {
     useEffect(()=>{
         if(deleted){
             setDeleted(false)
-            axios.get('http://localhost:5500/trabajador_details')
+            axios.get(`${apiURL}/trabajador_details`)
             .then((res)=>{
                 setData(res.data)
         })
@@ -25,7 +25,7 @@ function Home() {
     useEffect(()=>{
         if(deleted){
             setDeleted(false)
-            axios.get('http://localhost:5500/cargo')
+            axios.get(`${apiURL}/cargo`)
             .then((res)=>{
                 setCargos(res.data)
             })
@@ -35,7 +35,7 @@ function Home() {
 
     //borrar trabajador
     function handleDelete(id){
-        axios.delete(`http://localhost:5500/delete_trabajador/${id}`)
+        axios.delete(`${apiURL}/delete_trabajador/${id}`)
         .then((res)=>{
             setDeleted(true)
         })
@@ -49,7 +49,7 @@ function Home() {
     
         // Proceder solo si el usuario confirma
         if (isConfirmed) {
-            axios.delete(`http://localhost:5500/delete_cargo/${id}`)
+            axios.delete(`${apiURL}/delete_cargo/${id}`)
                 .then((res) => {
                     setDeleted(true);
                     // Puedes agregar aquí cualquier otra lógica que necesites después de la eliminación exitosa
@@ -57,6 +57,15 @@ function Home() {
                 .catch((err) => console.log(err));
         }
     }
+
+    //paginación
+    const [currentPage, setCurrentPage] = useState(1);
+    const recordsPage = 10;
+    const lastIndex = currentPage * recordsPage;
+    const firstIndex = lastIndex - recordsPage;
+    const records = data.slice(firstIndex, lastIndex);
+    const nPage = Math.ceil(data.length / recordsPage);
+    const numbers = [ ...Array(nPage+1).keys()].slice(1);
 
   return (
     <div className='container-fluid bg-light vh-100'>
@@ -83,7 +92,7 @@ function Home() {
                 </thead>
                 <tbody>
                     {
-                        data.map((trabajador)=>{
+                        records.map((trabajador)=>{
                             return (<tr>
                                 {/* <td>{trabajador.id}</td> */}
                                 <td>{trabajador.name}</td>
@@ -101,6 +110,24 @@ function Home() {
                     }
                 </tbody>
             </table>
+            {/* paginación */}
+            <nav>
+                <ul className="pagination">
+                    <li className="page-item">
+                        <a className="page-link" href="#" onClick={prePage}>Anterior</a>
+                    </li>
+                    {
+                        numbers.map((n, i) => (
+                            <li className={`page-item ${currentPage === n ? 'active' : ''}`} key={i}>
+                                <a className="page-link" href="#" onClick={()=> changeCPage(n)}>{n}</a>
+                            </li>
+                        ))
+                    }
+                    <li className="page-item">
+                        <a className="page-link" href="#" onClick={nextPage}>Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
 
             {/* cargos lista */}
             <h3 className='text-center m-4'>Lista de Cargos</h3>
@@ -135,6 +162,22 @@ function Home() {
         </div>
     </div>
   )
+
+  function prePage() {
+    if(currentPage !== 1){
+        setCurrentPage(currentPage - 1);
+    }
+  }
+
+  function changeCPage(id) {
+    setCurrentPage(id)
+  }
+
+  function nextPage() {
+    if(currentPage !== nPage){
+        setCurrentPage(currentPage + 1);
+    }
+  }
 }
 
 export default Home

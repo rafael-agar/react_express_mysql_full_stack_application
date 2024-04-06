@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+const apiURL = process.env.REACT_APP_API_URL;
 
 function Edit_cargo() {
   const [data, setData] = useState([]);
@@ -9,7 +10,7 @@ function Edit_cargo() {
   //obtener un cargo
   useEffect(() => {
     axios
-      .get(`http://localhost:5500/get_cargo/${id}`)
+      .get(`${apiURL}/get_cargo/${id}`)
       .then((res) => {
         setData(res.data);
       })
@@ -22,7 +23,7 @@ function Edit_cargo() {
     e.preventDefault();
 
     axios
-      .post(`http://localhost:5500/edit_cargo/${id}`, data[0])
+      .post(`${apiURL}/edit_cargo/${id}`, data[0])
       .then((res) => {
         navigate("/admin");
         console.log(res);

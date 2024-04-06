@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+const apiURL = process.env.REACT_APP_API_URL;
 
 function Edit() {
   const [data, setData] = useState([]);
@@ -8,7 +9,7 @@ function Edit() {
   const { id } = useParams();
   useEffect(() => {
     axios
-      .get(`http://localhost:5500/get_trabajador/${id}`)
+      .get(`${apiURL}/get_trabajador/${id}`)
       .then((res) => {
         setData(res.data);
       })
@@ -17,7 +18,7 @@ function Edit() {
 
   useEffect(()=>{
     axios
-      .get(`http://localhost:5500/cargo`)
+      .get(`${apiURL}/cargo`)
       .then((res) => {
         setCargo(res.data);
       })
@@ -30,7 +31,7 @@ function Edit() {
     e.preventDefault();
 
     axios
-      .post(`http://localhost:5500/edit_trabajador/${id}`, data[0])
+      .post(`${apiURL}/edit_trabajador/${id}`, data[0])
       .then((res) => {
         navigate("/admin");
         console.log(res);
