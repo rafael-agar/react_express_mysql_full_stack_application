@@ -315,9 +315,13 @@ function calcularTiempoTrabajado(hoursStart, hoursEnd) {
 
 // Función para calcular las horas extras
 function calcularHorasExtra(timeWorked) {
-  const horasNormales = 9.9; // Número de horas normales de trabajo
-  if (timeWorked > horasNormales) {
-      return parseFloat((timeWorked - horasNormales).toFixed(2)); // Horas extras
+  const horasNormales = 10.5; // Número de horas normales de trabajo
+  if (timeWorked >= horasNormales && timeWorked <= 11.5) {
+      //return parseFloat((timeWorked - horasNormales).toFixed(2)); // Horas extras
+      return 1;
+  }
+  if (timeWorked > 12) {
+    return 2;
   }
   return 0; // No hay horas extras
 }

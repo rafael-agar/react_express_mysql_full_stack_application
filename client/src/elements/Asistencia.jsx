@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {useNavigate} from 'react-router-dom'
 import axios from 'axios';
 import myLogo from '../Logo.png'
+import Reloj from '../components/Reloj'
 const apiURL = process.env.REACT_APP_API_URL;
 
 function Asistencia() {
@@ -82,6 +83,9 @@ function Asistencia() {
         </div>
       )}
       <div className={showModal ? "modal-backdrop fade show" : ""}></div>
+      <div className="m-4 pb-4">
+        <Reloj />
+      </div>
     </div>
   );
 }
