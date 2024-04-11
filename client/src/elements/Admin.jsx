@@ -35,11 +35,16 @@ function Home() {
 
     //borrar trabajador
     function handleDelete(id){
-        axios.delete(`${apiURL}/delete_trabajador/${id}`)
-        .then((res)=>{
-            setDeleted(true)
-        })
-        .catch((err)=> console.log(err))
+
+        const isConfirmed = window.confirm("¿Estás seguro de que deseas eliminar el  trabajador?")
+
+        if(isConfirmed) {
+            axios.delete(`${apiURL}/delete_trabajador/${id}`)
+            .then((res)=>{
+                setDeleted(true)
+            })
+            .catch((err)=> console.log(err))
+        }
     }
 
     //borrar cargo

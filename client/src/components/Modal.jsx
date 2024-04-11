@@ -11,7 +11,6 @@ const Modal = ({ data, modal }) => {
     const fin = fechaFin ? new Date(fechaFin) : new Date('2999-12-31'); // Fecha muy futura
     return fecha >= inicio && fecha <= fin;
   });
-  
 
   return (
     <div className="modal modal-lg modal-dialog-scrollable show d-block" id='staticBackdrop' tabIndex="-1">
@@ -28,7 +27,11 @@ const Modal = ({ data, modal }) => {
               
             </div>
             <div>
-              <CSVLink className='btn btn-success' data={datosFiltrados}>Exportar</CSVLink>
+              <CSVLink 
+                className='btn btn-success' 
+                data={datosFiltrados} 
+                filename={`asistencia${new Date()}.csv`}
+              >Exportar</CSVLink>
             </div>
           </div>
           
@@ -42,6 +45,7 @@ const Modal = ({ data, modal }) => {
                   <th className='bg-black text-white fs-6'>Hora Salida</th>
                   <th className='bg-black text-white fs-6'>Tiempo Trabajado</th>
                   <th className='bg-black text-white fs-6'>Redoble</th>
+                  <th className='bg-black text-white fs-6'>Asistencia</th>
                 </tr>
               </thead>
               <tbody>
@@ -54,6 +58,7 @@ const Modal = ({ data, modal }) => {
                       <td className='fs-6'>{reporte.hours_end}</td>
                       <td className='fs-6'>{reporte.time_worked}</td>
                       <td className='fs-6'>{reporte.overtime}</td>
+                      <td className='fs-6'>{reporte.asistencia}</td>
                     </tr>
                   ))
                 }

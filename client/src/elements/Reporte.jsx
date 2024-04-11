@@ -71,7 +71,9 @@ const Reporte = () => {
                         <th className='bg-black text-white'>Hora Salida</th>
                         <th className='bg-black text-white'>Tiempo Trabajado</th>
                         <th className='bg-black text-white'>Redoble</th>
+                        <th className='bg-black text-white fs-6'>Asistencia</th>
                         <th className='bg-black text-white'>Acción</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -86,6 +88,7 @@ const Reporte = () => {
                                 <td>{reporte.hours_end}</td> {/* Print the cargo name */}
                                 <td>{reporte.time_worked}</td>
                                 <td>{reporte.overtime}</td>
+                                <td>{reporte.asistencia}</td>
                                 <td>
                                     {/* <Link className='btn mx-2 btn-primary' to={`/read/${reporte.id}`}>Read</Link> */}
                                     <Link className='btn mx-2 btn-primary' to={`/edit_reporte/${reporte.id}`}>Edit</Link>

@@ -280,9 +280,9 @@ function updateAttendanceRecord(row, userId, currentDate, res) {
       // Aplicar el ajuste de zona horaria (restar 4 horas)
       hoursEnd.setHours(hoursEnd.getHours() - 4); 
       const hoursEndFormatted = hoursEnd.toISOString().slice(0, 19).replace('T', ' ');
-
-      const updateValues = [hoursEndFormatted, timeWorked, calcularHorasExtra(timeWorked), userId, currentDate];
-      const updateAttendanceSql = `UPDATE asistencia_daily SET hours_end = ?, time_worked = ?, overtime = ? WHERE usuario = ? AND date = ?`;
+      const asistenciaDato = "Asistió"
+      const updateValues = [hoursEndFormatted, timeWorked, calcularHorasExtra(timeWorked), asistenciaDato, userId, currentDate];
+      const updateAttendanceSql = `UPDATE asistencia_daily SET hours_end = ?, time_worked = ?, overtime = ?, asistencia = ? WHERE usuario = ? AND date = ?`;
       db.query(updateAttendanceSql, updateValues, (err, updateResult) => {
         if (err) {
           console.error('Error updating asistencia_daily:', err);
@@ -331,10 +331,10 @@ function calcularHorasExtra(timeWorked) {
 
 
 app.post('/add_asistencia', (req, res) => {
-  const { usuario, date, hours_start, hours_end, time_worked,overtime } = req.body;
+  const { usuario, date, hours_start, hours_end, time_worked,overtime, asistencia } = req.body;
 
   // Query to insert data into asistencia_daily table
-  const sql = `INSERT INTO asistencia_daily (usuario, date, hours_start, hours_end, time_worked, overtime) VALUES (?, ?, ?, ?, ?, ?)`;
+  const sql = `INSERT INTO asistencia_daily (usuario, date, hours_start, hours_end, time_worked, overtime) VALUES (?, ?, ?, ?, ?, ?, ?)`;
   const values = [usuario, date, hours_start, hours_end, time_worked, overtime];
 
   db.query(sql, values, (err, result) => {
