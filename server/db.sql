@@ -32,6 +32,7 @@ CREATE TABLE `asistencia_daily` (
   `hours_end` time DEFAULT NULL,
   `time_worked` decimal(5,2) DEFAULT NULL,
   `overtime` int DEFAULT NULL,
+  `aisistencia` varchar(45) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_asistencia_daily_usuario` (`usuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
